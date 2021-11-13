@@ -1,0 +1,121 @@
+:root {
+--chbox_sel-color:#b75499;
+}
+
+body {
+          background-color: black;
+        }
+.stripe-2 {
+    color: black;
+    text-align: center;
+    background: repeating-linear-gradient(45deg,
+            #fdfd5f,
+            #fdfd5f 10px,
+            #8a8a8a 10px,
+            #8a8a8a 20px),
+        linear-gradient(to bottom,
+            #eee,
+            #999);
+    margin: 0;
+}
+
+/* .display {
+            display: flex;
+        } */
+
+.modal {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 4px solid #FFBDE1;
+    background: #FFE6F4;
+}
+
+.modal.main {
+    position: relative;
+    margin: 50% auto;
+    width: 200px;
+    text-align: center;
+}
+
+.modal.main p {
+    margin: 5px auto;
+    font-weight: bold;
+}
+
+.modal.main a {
+    font-weight: bolder;
+    color: white;
+
+    text-shadow: var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em,
+    var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em;
+    text-decoration: none;
+}
+
+.tboxWrapper {
+    position: absolute;
+    top: 80%;
+    width: 70%;
+    left: 0px;
+    right: 0px;
+
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 6;
+}
+
+.tboxWrapper #name {
+    display: block;
+    color: black;
+    font-weight: bolder;
+    text-align: center;
+    width: 100px;
+    height: 24px;
+    border: 1px solid #ffffffeb;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+    background-color: #ffffffeb;
+    z-index: 5;
+    margin: -3px 2%;
+}
+
+.tboxWrapper #msg {
+    color: white;
+    font-weight: bolder;
+    z-index: 6;
+    text-align: center;
+    border-radius: 15px;
+    border: 3px solid #ffbde1;
+    padding: 5px;
+
+    height: 3em;
+
+    text-shadow:
+        -1px -1px 0 #000000,
+        1px -1px 0 #000000,
+        -1px 1px 0 #000000,
+        1px 1px 0 #000000,
+        -2px 0 0 #000000,
+        2px 0 0 #000000,
+        0 2px 0 #000000,
+        0 -2px 0 #000000;
+    background: #ffffffeb;
+}
+
+.chrDisp {
+    position: absolute;
+    z-index: 5;
+    top: 12%;
+    text-align: center;
+}
+
+.chrDisp img {
+    object-fit: contain;
+    width: 50%;
+}
+
+.main .bgImg {
+    object-fit: contain;
+    width: 100%;
+    z-index: 0;
+    margin: auto 5px;
+}
