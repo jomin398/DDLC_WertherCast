@@ -1,10 +1,11 @@
 :root {
---chbox_sel-color:#b75499;
+    --chbox_sel-color: #b75499;
 }
 
 body {
-          background-color: black;
-        }
+    background-color: black;
+}
+
 .stripe-2 {
     color: black;
     text-align: center;
@@ -47,7 +48,7 @@ body {
     color: white;
 
     text-shadow: var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em,
-    var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em;
+        var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em, var(--chbox_sel-color) 0px 0px 0.2em;
     text-decoration: none;
 }
 
@@ -78,17 +79,23 @@ body {
     margin: -3px 2%;
 }
 
-.tboxWrapper #msg {
-    color: white;
-    font-weight: bolder;
+.tboxWrapper .tbox {
+
     z-index: 6;
     text-align: center;
     border-radius: 15px;
     border: 3px solid #ffbde1;
     padding: 5px;
 
-    height: 3em;
+    height: 5em;
 
+
+    background: #ffffffeb;
+}
+
+.tboxWrapper .tbox #msg {
+    color: white;
+    font-weight: bolder;
     text-shadow:
         -1px -1px 0 #000000,
         1px -1px 0 #000000,
@@ -98,7 +105,6 @@ body {
         2px 0 0 #000000,
         0 2px 0 #000000,
         0 -2px 0 #000000;
-    background: #ffffffeb;
 }
 
 .chrDisp {
