@@ -186,8 +186,7 @@ function initTbox() {
         _tboxWrap.className = 'tboxWrapper';
         _tbox = document.createElement('div');
         _tbox.className = 'tbox';
-        // _msg = document.createElement('div');
-        _msg = document.createElement('p');
+        _msg = document.createElement('div');
         _msg.id = 'msg';
         _msg.onclick = () => {
             console.log('next');
@@ -325,7 +324,7 @@ window.onload = () => {
 async function scrOnload() {
     for (let i = 0, l = mainData.textDB.data; i < l.length; i++) {
         showText(l[i], 0, 100);
-        await sleep(1500);
+        await sleep(2000);
     }
     console.log('Done!');
 }
