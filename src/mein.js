@@ -26,35 +26,41 @@ function xhrParse(meth, url, data) {
         xhr.open(meth ? meth : "GET", url, true);
 
         // 통신이 완료되어 데이터를 다 받아온 경우, 실행된다
-        xhr.onload = () => {
+        xhr.onreadystatechange = (e) => {
             // status 는 HTTP 통신의 결과를 의미하며, 200 은 통신이 성공했다는 의미
             if (xhr.response) {
                 console.log('dataLoaded', true);
                 resolve(xhr.response); // Promise 로 결과값을 반환해준다
             } else {
-                console.log('dataLoaded', "ERROR LOADING FILE!" + this);
+                console.log('dataLoaded', "ERROR LOADING FILE!", xhr);
+                reject(e);
                 // alert("ERROR LOADING FILE!" + this.status);
             }
         };
-        xhr.onerror = (e)=>{reject(e)};
         xhr.send(data);
     });
 }
 function onPageError(headMsg, cbf) {
     _elm = document.body.querySelector('body div.main');
-    if (_elm) { _elm.remove() } else {
-        _elm = document.createElement('div');
-        _elm.className = 'main';
-        if (headMsg) {
-            _h = document.createElement('h2');
-            _h.className = 'stripe-2';
-            _h.innerText = headMsg;
-            _elm.appendChild(_h);
-        }
-
-        document.body.appendChild(_elm);
-        if (cbf) { cbf() };
+    _tboxWrap = document.body.querySelector('.tboxWrapper');
+    if (_elm) {
+        _elm.remove();   
     }
+    if (_tboxWrap) {
+        _tboxWrap.remove()
+    }
+    _elm = document.createElement('div');
+    _elm.className = 'main';
+    if (headMsg) {
+        _h = document.createElement('h2');
+        _h.className = 'stripe-2';
+        _h.innerText = headMsg;
+        _elm.appendChild(_h);
+    }
+
+    document.body.appendChild(_elm);
+    if (cbf) { cbf() };
+
 };
 function mkChoicesBox(msg, btns) {
     _Cbox = document.createElement('div');
@@ -214,7 +220,7 @@ function pageInit() {
     mainData.display.root = { name: 'main_root', elm: _elm };
     initChrImg();
     initTbox();
-    xhrParse('get', './script/main.txt')
+    xhrParse('get', './script/ main.txt')
         .then(d => {
             mainData.textDB.raw = d.split(/\r|\n/);
             _cn = mainData.textDB.raw.find(element => element.indexOf('def chrname =') != -1).split('=')[1].trim();
@@ -228,8 +234,9 @@ function pageInit() {
         })
         .then(() => scrOnload())
         .catch(error => {
+            console.log(error)
             onPageError("대본 불러오기 실패 !!", () => {
-                mkChoicesBox('대본 읽기 오류\n' + error, [
+                mkChoicesBox('대본 읽기 오류\n' +JSON.stringify({response:error.target.response,errorCode:error.target.status}), [
                     ['알았어', 'javascript:document.location.reload();'],
                     ['괜찮아...', "javascript:console.log('hello.');"]
                 ]);
