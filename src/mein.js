@@ -36,6 +36,7 @@ function xhrParse(meth, url, data) {
                 // alert("ERROR LOADING FILE!" + this.status);
             }
         };
+        xhr.onerror = (e)=>{reject(e)};
         xhr.send(data);
     });
 }
@@ -109,7 +110,7 @@ function initChrImg() {
 function showText(message, index, interval) {
     _isMob = document.body.clientWidth <= 720;
     _target = mainData.display.text.elm;
-    brkReg = /\[(.*)\]/g;
+    brkReg = /\[([\w가-힣_\s]*)\]/g;
     if (message) {
         mainData.display.text.now = message;
         mainData.display.text.inroll = true;
@@ -119,12 +120,15 @@ function showText(message, index, interval) {
             message = _data[1].trim();
             console.log(message.match(brkReg));
             if (brkReg.test(message)) {
-                // for (let i in message.match(brkReg)){
-                //     _data = message.match(brkReg)[i].replace(brkReg, '$1');
-                //     if(_data == 'player') {
-                //         message = message.replace(message.match(brkReg)[0].toString(), mainData.player.name);
-                //     };
-                // }
+                for (let i = 0, l = message.match(brkReg); i < l.length; i++) {
+                    _data = l[i].replace(brkReg, '$1');
+                    if (_data == 'player') {
+                        message = message.replace(l[i], mainData.player.name);
+                    } else if (_data.includes('chr_emotion')) {
+                        message = message.replace(l[i], '');
+                        setChrImg(parseInt(_data.replace(/[^0-9]/g, '')));
+                    }
+                }
             }
             document.querySelector('.tboxWrapper #name').innerText = _name;
         }
@@ -210,17 +214,27 @@ function pageInit() {
     mainData.display.root = { name: 'main_root', elm: _elm };
     initChrImg();
     initTbox();
-    xhrParse('get', './script/main.txt').then(d => {
-        mainData.textDB.raw = d.split(/\r|\n/);
-        _cn = mainData.textDB.raw.find(element => element.indexOf('def chrname =') != -1).split('=')[1].trim();
-        _un = mainData.textDB.raw.find(element => element.indexOf('def username =') != -1).split('=')[1].trim();
-        _pn = mainData.textDB.raw.find(element => element.indexOf('def playername =') != -1).split('=')[1].trim();
-        mainData.chr.name = _cn;
-        mainData.user.name = _un;
-        mainData.player.name = _pn;
-        mainData.textDB.data = mainData.textDB.raw.filter(word => word.indexOf(':') > -1);
-        console.log(mainData.textDB);
-    }).then(() => scrOnload())
+    xhrParse('get', './script/main.txt')
+        .then(d => {
+            mainData.textDB.raw = d.split(/\r|\n/);
+            _cn = mainData.textDB.raw.find(element => element.indexOf('def chrname =') != -1).split('=')[1].trim();
+            _un = mainData.textDB.raw.find(element => element.indexOf('def username =') != -1).split('=')[1].trim();
+            _pn = mainData.textDB.raw.find(element => element.indexOf('def playername =') != -1).split('=')[1].trim();
+            mainData.chr.name = _cn;
+            mainData.user.name = _un;
+            mainData.player.name = _pn;
+            mainData.textDB.data = mainData.textDB.raw.filter(word => word.indexOf(':') > -1);
+            console.log(mainData.textDB);
+        })
+        .then(() => scrOnload())
+        .catch(error => {
+            onPageError("대본 불러오기 실패 !!", () => {
+                mkChoicesBox('대본 읽기 오류\n' + error, [
+                    ['알았어', 'javascript:document.location.reload();'],
+                    ['괜찮아...', "javascript:console.log('hello.');"]
+                ]);
+            });
+        })
 }
 
 /**

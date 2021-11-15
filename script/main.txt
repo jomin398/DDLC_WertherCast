@@ -3,3 +3,4 @@ def username = 나
 def playername = user
 
 모니카 : [chr_emotion1] 안녕? [player]...!
+모니카 : [chr_emotion0]
