@@ -1,7 +1,8 @@
 def chrname = 모니카
 def username = 나
 def playername = user
-
+// [dotboxClean] = clear
+// [donextBlock] = next block
 모니카 : [chr_emotion1] 안녕? [player]...!
 모니카 : [chr_emotion0]
-모니카 : [player]는 웹 마스터 이지? 아닌가?
+모니카 : [dotboxClean] [player]는 웹 마스터 이지? 아닌가?[donextBlock]

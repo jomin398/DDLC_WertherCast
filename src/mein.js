@@ -2,7 +2,7 @@ const mainData = {
     display: {
         root: { elm: null },
         bg: { elm: null },
-        text: { root: { elm: null }, elm: null, now: null, inroll: false }
+        text: { root: { elm: null }, elm: null, now: null, nowindex: 0, inroll: false, nextBlock: false }
     },
     chr: { elm: null, name: null },
     user: {
@@ -132,34 +132,47 @@ function showText(message, index, interval) {
         _isMob = document.body.clientWidth <= 720;
         _target = mainData.display.text.elm;
         brkReg = /\[([\w가-힣_\s]*)\]/g;
+
         if (message) {
-            mainData.display.text.now = message;
-            mainData.display.text.inroll = true;
-            if (message.includes(':')) {
-                _data = message.split(':');
-                _name = _data[0].trim();
-                message = _data[1].trim();
-                console.log(message.match(brkReg));
-                if (brkReg.test(message)) {
-                    for (let i = 0, l = message.match(brkReg); i < l.length; i++) {
-                        _data = l[i].replace(brkReg, '$1');
-                        if (_data == 'player') {
-                            message = message.replace(l[i], mainData.player.name);
-                        } else if (_data.includes('chr_emotion')) {
-                            message = message.replace(l[i], '');
-                            setChrImg(parseInt(_data.replace(/[^0-9]/g, '')));
+            if (!message.includes('//')) {
+                mainData.display.text.now = message;
+                mainData.display.text.inroll = true;
+                if (message.includes(':')) {
+                    _data = message.split(':');
+                    _name = _data[0].trim();
+                    message = _data[1].trim();
+                    console.log(message.match(brkReg));
+                    if (brkReg.test(message)) {
+                        for (let i = 0, l = message.match(brkReg); i < l.length; i++) {
+                            _data = l[i].replace(brkReg, '$1');
+                            if (_data == 'player') {
+                                message = message.replace(l[i], mainData.player.name);
+                            } else if (_data.includes('chr_emotion')) {
+                                message = message.replace(l[i], '');
+                                setChrImg(parseInt(_data.replace(/[^0-9]/g, '')));
+                            } else if (_data == 'donextBlock') {
+                                mainData.display.text.nextBlock = true;
+                                message = message.replace(l[i], '');
+                            } else if (_data == 'dotboxClean') {
+                                message = message.replace(l[i], '');
+                                _target.innerHTML = '';
+                            }
                         }
                     }
+                    document.querySelector('.tboxWrapper #name').innerText = _name;
                 }
-                document.querySelector('.tboxWrapper #name').innerText = _name;
-            }
-            //letter by letter.
-            if (index < message.length) {
-                _target.innerHTML = _target.innerHTML + message[index++];
-                setTimeout(function () { showText(message, index, interval); }, interval);
-            } else {
-                mainData.display.text.inroll = false;
-                r(1);
+                //letter by letter.
+                if (index < message.length) {
+                    _target.innerHTML = _target.innerHTML + message[index++];
+                    setTimeout(function () { showText(message, index, interval); }, interval);
+                } else {
+                    mainData.display.text.inroll = false;
+                    mainData.display.text.nowindex++;
+                    r(1);
+                }
+            } else if(message.includes('//')) {
+                mainData.display.text.nowindex++;
+                showText(mainData.textDB.data[mainData.display.text.nowindex], 0, 100);
             }
         } else {
             _target.innerHTML = '';
@@ -172,7 +185,14 @@ function showText(message, index, interval) {
         }
     })
 }
-
+function textNextFn() {
+    if (!mainData.display.text.nextBlock) {
+        console.log('next');
+        showText(mainData.textDB.data[mainData.display.text.nowindex], 0, 100);
+    } else {
+        console.log('next is blocked.');
+    }
+}
 function initTbox() {
     _elm = mainData.display.root.elm;
     _isMob = document.body.clientWidth <= 720;
@@ -186,12 +206,9 @@ function initTbox() {
         _tboxWrap.className = 'tboxWrapper';
         _tbox = document.createElement('div');
         _tbox.className = 'tbox';
-        // _msg = document.createElement('div');
-        _msg = document.createElement('p');
+        _msg = document.createElement('div');
         _msg.id = 'msg';
-        _msg.onclick = () => {
-            console.log('next');
-        }
+        _tbox.onclick = textNextFn;
         /*
         //next locking.
         document.querySelector('div.tboxWrapper #msg').onclick = '';
@@ -252,8 +269,21 @@ function pageInit() {
         .then(() => scrOnload())
         .catch(error => {
             // console.log(error)
-            onPageError("대본 불러오기 실패 !!", () => {
-                mkChoicesBox('대본 읽기 오류\n' + JSON.stringify({ response: error.target.response, errorCode: error.target.status }), [
+            _data = null;
+            if (error.target) {
+                _data = {
+                    t: "대본 불러오기 실패 !!",
+                    m: '대본 읽기 오류\n' + JSON.stringify({ response: error.target.response, errorCode: error.target.status })
+                };
+            } else {
+                _data = {
+                    t: "ERROR : TraceBack",
+                    m: '아무래도 문재가 생긴거 같아\n' + error.name + ' : ' + error.message + '\n==== stack ====\n' + error.stack
+                };
+            }
+            onPageError(_data.t, () => {
+                console.log(error)
+                mkChoicesBox(_data.m, [
                     ['알았어', 'javascript:document.location.reload();'],
                     ['괜찮아...', "javascript:console.log('hello.');"]
                 ]);
@@ -322,10 +352,7 @@ window.onload = () => {
     setChrImg('monika_0')
 };
 
-async function scrOnload() {
-    for (let i = 0, l = mainData.textDB.data; i < l.length; i++) {
-        showText(l[i], 0, 100);
-        await sleep(1500);
-    }
-    console.log('Done!');
+function scrOnload() {
+    showText(mainData.textDB.data[0], 0, 100);
+    console.log('awaiting next click...');
 }
